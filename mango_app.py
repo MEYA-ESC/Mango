@@ -155,7 +155,7 @@ if st.session_state.log:
             row_cols[i].write(entry[c])
         if row_cols[-1].button("Delete", key=f"del_{idx}"):
             st.session_state.log.pop(idx)
-            st.experimental_rerun()
+            st.rerun()
 
     # CSV download
     csv = df.to_csv(index=False).encode("utf-8")
