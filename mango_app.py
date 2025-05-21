@@ -80,22 +80,23 @@ if image_source:
         "Ripeness": ripeness
     })
 
-# Show and edit log as a table
-if st.session_state.log:
-    st.markdown("---")
-    st.subheader("📑 Results Log (editable)")
-    df = pd.DataFrame(st.session_state.log)
+    # Show and edit log as a table
+    if st.session_state.log:
+        st.markdown("---")
+        st.subheader("📑 Results Log (editable)")
+        df = pd.DataFrame(st.session_state.log)
 
-    edited_df = st.experimental_data_editor(
-        df,
-        num_rows="dynamic",           # allow add/delete
-        use_container_width=True
-    )
+-       edited_df = st.experimental_data_editor(
++       edited_df = st.data_editor(
+            df,
+            num_rows="dynamic",           # allow add/delete
+            use_container_width=True
+        )
 
-    # If the user added/deleted rows, update our session state
-    if not edited_df.equals(df):
-        st.session_state.log = edited_df.to_dict("records")
-        st.experimental_rerun()
+        # If the user added/deleted rows, update our session state
+        if not edited_df.equals(df):
+            st.session_state.log = edited_df.to_dict("records")
+            st.experimental_rerun()
 
     # Download button
     csv = edited_df.to_csv(index=False).encode("utf-8")
