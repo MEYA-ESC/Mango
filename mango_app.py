@@ -57,4 +57,14 @@ else:
     else:
         st.info("Please upload a mango image from the sidebar.")
 
-# ... Results Log code unchanged ...
+# --- Results Log Table ---
+if st.session_state.log:
+    st.markdown("---")
+    st.subheader("📑 Results Log")
+    df = pd.DataFrame(st.session_state.log)
+    st.dataframe(df, use_container_width=True)
+
+    csv = df.to_csv(index=False).encode("utf-8")
+    st.download_button("Download log as CSV", csv, "mango_log.csv", "text/csv")
+else:
+    st.info("Please upload or snap a mango image from the sidebar.")
