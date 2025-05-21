@@ -80,9 +80,9 @@ zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 50, 40)
 
 # --- Ripeness classification & analysis funcs ---
 def classify_ripeness_by_hue(hue):
-    if   80 <= hue < 180:   return "Unripe"
-    elif 60 <= hue < 80:    return "Partially Ripe"
-    elif 40 <= hue < 60:    return "Ripe"
+    if   90 <= hue < 180:   return "Unripe"
+    elif 50 <= hue < 90:    return "Partially Ripe"
+    elif 40 <= hue < 50:    return "Ripe"
     elif 0 <= hue < 40 or hue >= 330:
         return "Overripe"
     else:
