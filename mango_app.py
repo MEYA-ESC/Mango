@@ -162,11 +162,24 @@ if st.session_state.log:
 
     st.dataframe(styled_df, use_container_width=True)
 
-    # CSV download
-    csv = df.to_csv(index=False).encode("utf-8")
-    st.download_button("Download log as CSV", csv, "mango_log.csv", "text/csv")
-else:
-    if use_camera:
-        st.info("Enable 'Use camera' then snap a photo above, or uncheck to close it.")
-    else:
-        st.info("Please upload a mango image from the sidebar.")
+    # Reset confirmation mechanism
+    if "reset_confirm" not in st.session_state:
+        st.session_state.reset_confirm = False
+
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        if st.session_state.reset_confirm:
+            if st.button("✅ Confirm Reset"):
+                st.session_state.log = []
+                st.session_state.reset_confirm = False
+                st.success("Results log has been cleared.")
+                st.experimental_rerun()
+            if st.button("❌ Cancel"):
+                st.session_state.reset_confirm = False
+        else:
+            if st.button("🗑️ Reset Log"):
+                st.session_state.reset_confirm = True
+
+    with col2:
+        csv = df.to_csv(index=False).encode("utf-8")
+        st.download_button("Download log as CSV", csv, "mango_log.csv", "text/csv")
