@@ -6,70 +6,27 @@ from PIL import Image
 import colorsys
 from datetime import datetime
 
-# --- Page config & custom CSS mango theme ---
+# --- Page config & theme CSS (omitted for brevity) ---
 st.set_page_config(
     page_title="🥭 Mango Ripeness Detector",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-st.markdown("""
-    <style>
-    /* Overall page background */
-    .stApp {
-        background: #FFF8E1;  /* pale mango flesh */
-    }
-    /* Header styling */
-    .header {
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: #FFC107;  /* mango yellow */
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    .header img {
-        height: 40px;
-        margin-right: 10px;
-    }
-    .header h1 {
-        margin: 0;
-        font-size: 2rem;
-        color: #4E342E;  /* dark mango pit */
-    }
-    /* Sidebar styling */
-    .css-1d391kg {  /* this class may vary by Streamlit version */
-        background-color: #FFF3E0;  /* lighter flesh */
-    }
-    .css-1v3fvcr {
-        color: #4E342E;
-    }
-    /* Card style for results */
-    .stImage, .stDataFrame {
-        border: 2px solid #FFB300;
-        border-radius: 8px;
-        padding: 8px;
-        background-color: #FFFFFF;
-    }
-    </style>
-    <div class="header">
-      <img src="https://i.imgur.com/3XcKf6K.png" />
-      <h1>🥭 Mango Ripeness Detector</h1>
-    </div>
-""", unsafe_allow_html=True)
-
-# --- Initialize session log ---
+# Initialize log
 if "log" not in st.session_state:
     st.session_state.log = []
 
 # --- Sidebar controls ---
 st.sidebar.title("📋 Settings")
-upload = st.sidebar.file_uploader("Upload Mango Image", type=["jpg","jpeg","png"])
-cam    = st.sidebar.camera_input("Or take a photo")
-zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 50, 40)
 
-# Determine image source
-image_source = upload if upload is not None else cam
+use_camera = st.sidebar.checkbox("Use camera", value=False)
+if use_camera:
+    image_source = st.sidebar.camera_input("Take a photo")
+else:
+    image_source = st.sidebar.file_uploader("Upload Mango Image", type=["jpg","jpeg","png"])
+
+zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 50, 40)
 
 # Ripeness classification
 def classify_ripeness_by_hue(hue):
@@ -89,19 +46,19 @@ def analyze_image(img, zoom):
     arr = np.array(crop)
     avg = arr.mean(axis=(0,1))
     avg_py = [int(round(x)) for x in avg]
-
     rn, gn, bn = [c/255 for c in avg_py]
     h_norm, _, _ = colorsys.rgb_to_hsv(rn, gn, bn)
     hue_deg = h_norm * 360
     ripeness = classify_ripeness_by_hue(hue_deg)
     return crop, avg_py, hue_deg, ripeness
 
-# --- Main Content ---
-if image_source:
+st.title("🥭 Mango Ripeness Detector")
+
+# Process a new image if provided
+if image_source is not None:
     img = Image.open(image_source).convert("RGB")
     cropped, avg_color, hue, ripeness = analyze_image(img, zoom_pct)
 
-    # Two columns: image + stats
     col1, col2 = st.columns([2,1])
     with col1:
         st.image(cropped, caption="Cropped Mango", use_container_width=True)
@@ -110,10 +67,10 @@ if image_source:
         st.markdown(f"**Avg RGB:** {tuple(avg_color)}")
         st.markdown(f"**Hue:** {hue:.1f}°")
         st.markdown(f"### Predicted: {ripeness}")
-        swatch = np.ones((100,100,3), dtype=np.uint8)*np.array(avg_color, dtype=np.uint8)
+        swatch = np.ones((100,100,3), dtype=np.uint8) * np.array(avg_color, dtype=np.uint8)
         st.image(swatch, caption="Color Swatch", use_container_width=True)
 
-    # Log it
+    # Append to log
     st.session_state.log.append({
         "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "Avg_R": avg_color[0],
@@ -123,14 +80,35 @@ if image_source:
         "Ripeness": ripeness
     })
 
-# --- Results Log Table ---
+# Show Results Log as a table with Delete buttons
 if st.session_state.log:
     st.markdown("---")
     st.subheader("📑 Results Log")
-    df = pd.DataFrame(st.session_state.log)
-    st.dataframe(df, use_container_width=True)
 
-    csv = df.to_csv(index=False).encode("utf-8")
+    # Build DataFrame just for header labels
+    df = pd.DataFrame(st.session_state.log)
+    cols = df.columns.tolist()
+    # Show header row
+    header_cols = st.columns(len(cols) + 1)
+    for i, c in enumerate(cols):
+        header_cols[i].write(f"**{c}**")
+    header_cols[-1].write("")
+
+    # Show each row with a Delete button
+    for idx, entry in enumerate(st.session_state.log):
+        row_cols = st.columns(len(cols) + 1)
+        for i, c in enumerate(cols):
+            row_cols[i].write(entry[c])
+        if row_cols[-1].button("Delete", key=f"del_{idx}"):
+            st.session_state.log.pop(idx)
+            st.experimental_rerun()
+
+    # Download CSV
+    csv = pd.DataFrame(st.session_state.log).to_csv(index=False).encode("utf-8")
     st.download_button("Download log as CSV", csv, "mango_log.csv", "text/csv")
+
 else:
-    st.info("Please upload or snap a mango image from the sidebar.")
+    if use_camera:
+        st.info("Enable 'Use camera' and snap a photo above, or uncheck to close.")
+    else:
+        st.info("Please upload a mango image from the sidebar.")
