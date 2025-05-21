@@ -153,7 +153,7 @@ if st.session_state.log:
         row_cols = st.columns(len(cols) + 1)
     for i, c in enumerate(cols):
         row_cols[i].write(entry[c])
-    if row_cols[-1].button("Delete", key=f"del_{idx}"):
+ if row_cols[-1].button("Delete", key=f"del_{idx}"):
         st.session_state.log.pop(idx)
         st.rerun()
 
