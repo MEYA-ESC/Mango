@@ -53,7 +53,7 @@ uploaded_file = st.file_uploader("Upload a mango image", type=["jpg", "jpeg", "p
 if uploaded_file:
     cropped_img, avg_color, hue, ripeness = analyze_image(uploaded_file)
 
-    st.image(cropped_img, caption="Cropped Mango (center region)", use_column_width=True)
+    st.image(cropped_img, caption="Cropped Mango (center region)", use_container_width=True)
     st.markdown(f"**Average RGB:** {avg_color}")
     st.markdown(f"**Hue:** {hue:.2f}°")
     st.markdown(f"### 🍃 Predicted Ripeness: `{ripeness}`")
