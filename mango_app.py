@@ -67,8 +67,7 @@ if uploaded_file:
 
     with col2:
         st.subheader("🍃 Results")
-       avg_rgb = tuple(int(c) for c in avg_color)
-        st.markdown(f"**Average RGB:** {avg_rgb}")
+        st.markdown(f"**Average RGB:** {tuple(avg_color)}")
         st.markdown(f"**Hue:** {hue:.1f}°")
         st.markdown(f"### Predicted: {ripeness}")
 
