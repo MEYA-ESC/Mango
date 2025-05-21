@@ -74,9 +74,9 @@ use_camera = st.sidebar.checkbox("Use camera", value=False)
 if use_camera:
     image_source = st.sidebar.camera_input("Take a photo")
 else:
-    image_source = st.sidebar.file_uploader("Upload Mango Image", type=["jpg","jpeg","png"])
+    image_source = st.sidebar.file_uploader("Upload Image of Mango", type=["jpg","jpeg","png"])
 
-zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 50, 40)
+zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 80, 40)
 
 
 # --- Ripeness classification & analysis funcs ---
