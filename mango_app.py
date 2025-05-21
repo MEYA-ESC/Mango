@@ -8,7 +8,7 @@ from datetime import datetime
 
 # --- Page config & Mango Theme CSS ---
 st.set_page_config(
-    page_title="🎭 Mango Ripeness Detector",
+    page_title="🥭 Mango Ripeness Detector",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -56,7 +56,7 @@ st.markdown("""
 </style>
 
 <div class="header">
-  <h1>🎭 Mango Ripeness Detector</h1>
+  <h1>🥭 Mango Ripeness Detector</h1>
 </div>
 """, unsafe_allow_html=True)
 
@@ -67,7 +67,7 @@ if "log" not in st.session_state:
 
 
 # --- Sidebar controls ---
-st.sidebar.title("📜 Settings")
+st.sidebar.title("📋 Settings")
 use_camera = st.sidebar.checkbox("Use camera", value=False)
 
 if use_camera:
@@ -76,7 +76,6 @@ else:
     image_source = st.sidebar.file_uploader("Upload Mango Image", type=["jpg","jpeg","png"])
 
 zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 40, 50)
-samples = st.sidebar.slider("Sample Regions", 1, 10, 3)
 
 
 # --- Ripeness classification & analysis funcs ---
@@ -90,35 +89,21 @@ def classify_ripeness_by_hue(hue):
         return "Can't detect"
 
 
-def sample_multiple_regions(img, zoom, samples):
+def analyze_image(img, zoom):
     w, h = img.size
     z = zoom / 100
-    crop_size = (int(w * (1 - z * 2)), int(h * (1 - z * 2)))
-    regions = []
-    for _ in range(samples):
-        x = np.random.randint(0, w - crop_size[0])
-        y = np.random.randint(0, h - crop_size[1])
-        region = img.crop((x, y, x + crop_size[0], y + crop_size[1]))
-        regions.append(region)
-    return regions
+    crop = img.crop((w*z, h*z, w*(1-z), h*(1-z)))
+    arr = np.array(crop)
+    avg = arr.mean(axis=(0,1))
+    avg_py = [int(round(x)) for x in avg]
 
-
-def analyze_image(img, zoom, samples):
-    regions = sample_multiple_regions(img, zoom, samples)
-    avg_colors = []
-    hues = []
-    for region in regions:
-        arr = np.array(region)
-        avg = arr.mean(axis=(0,1))
-        avg_colors.append(avg)
-        rn, gn, bn = [c/255 for c in avg]
-        h_norm, _, _ = colorsys.rgb_to_hsv(rn, gn, bn)
-        hues.append(h_norm * 360)
-
-    avg_color = np.mean(avg_colors, axis=0).astype(int).tolist()
-    hue_deg = np.mean(hues)
+    # Convert to HSV for hue
+    rn, gn, bn = [c/255 for c in avg_py]
+    h_norm, _, _ = colorsys.rgb_to_hsv(rn, gn, bn)
+    hue_deg = h_norm * 360
     ripeness = classify_ripeness_by_hue(hue_deg)
-    return regions[0], avg_color, hue_deg, ripeness
+    return crop, avg_py, hue_deg, ripeness
+
 
 
 # --- Main content ---
@@ -130,15 +115,15 @@ if image_source:
     if img.size[0] > MAX_SIZE[0] or img.size[1] > MAX_SIZE[1]:
         img.thumbnail(MAX_SIZE, Image.Resampling.LANCZOS)
 
-    cropped, avg_color, hue, ripeness = analyze_image(img, zoom_pct, samples)
+    cropped, avg_color, hue, ripeness = analyze_image(img, zoom_pct)
 
     left, right = st.columns([2,1])
     with left:
-        st.image(cropped, caption="Sampled Region", use_container_width=True)
+        st.image(cropped, caption="Cropped Mango", use_container_width=True)
     with right:
         st.subheader("🍃 Results")
-        st.markdown(f"**Avg RGB:** {tuple(avg_color)}")
-        st.markdown(f"**Hue:** {hue:.1f}°")
+        st.markdown(f"*Avg RGB:* {tuple(avg_color)}")
+        st.markdown(f"*Hue:* {hue:.1f}°")
         st.markdown(f"### Predicted: {ripeness}")
         swatch = np.ones((100,100,3), dtype=np.uint8) * np.array(avg_color, dtype=np.uint8)
         st.image(swatch, caption="Color Swatch", use_container_width=True)
