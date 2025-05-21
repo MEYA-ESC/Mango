@@ -161,8 +161,8 @@ if st.session_state.log:
     ])
 st.dataframe(styled_df, use_container_width=True)
 
-    # CSV download
-    csv = df.to_csv(index=False).encode("utf-8")
+# CSV download
+csv = df.to_csv(index=False).encode("utf-8")
     st.download_button("Download log as CSV", csv, "mango_log.csv", "text/csv")
 else:
     if use_camera:
