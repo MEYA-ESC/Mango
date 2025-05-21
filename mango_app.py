@@ -56,7 +56,7 @@ st.markdown("""
 </style>
 
 <div class="header">
-  <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-vector%2Fmango-logo-vector_35515035.htm&psig=AOvVaw1UdNkqSGs1VN7fbdXpw879&ust=1747908362321000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCODxoZuotI0DFQAAAAAdAAAAABAE/>
+  <img src=<https://img.freepik.com/premium-vector/mango-logo-vector_535345-3179.jpg/>
   <h1>🥭 Mango Ripeness Detector</h1>
 </div>
 """, unsafe_allow_html=True)
