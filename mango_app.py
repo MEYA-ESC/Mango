@@ -112,8 +112,8 @@ if image_source:
 
 # Resize large images to max 1024x1024 while maintaining aspect ratio
 MAX_SIZE = (1024, 1024)
-    if img.size[0] > MAX_SIZE[0] or img.size[1] > MAX_SIZE[1]:
-        img.thumbnail(MAX_SIZE, Image.ANTIALIAS)
+if img.size[0] > MAX_SIZE[0] or img.size[1] > MAX_SIZE[1]:
+    img.thumbnail(MAX_SIZE, Image.ANTIALIAS)
 
     cropped, avg_color, hue, ripeness = analyze_image(img, zoom_pct)
 
