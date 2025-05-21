@@ -139,23 +139,32 @@ if st.session_state.log:
     st.subheader("📑 Results Log")
 
     df = pd.DataFrame(st.session_state.log)
-    cols = df.columns.tolist()
 
-    # Header row
-    header_cols = st.columns(len(cols))
-    for i, c in enumerate(cols):
-        header_cols[i].markdown(f"**{c}**")
+    # Mango-themed table styling
+    styled_df = df.style.set_properties(**{
+        'background-color': '#FFFDE7',
+        'border-color': '#FFB300',
+        'color': '#4E342E',
+        'border-width': '1px',
+        'border-style': 'solid',
+        'text-align': 'center',
+    }).set_table_styles([
+        {
+            'selector': 'thead th',
+            'props': [
+                ('background-color', '#FFD54F'),
+                ('color', '#4E342E'),
+                ('font-weight', 'bold'),
+                ('border', '1px solid #FFB300')
+            ]
+        }
+    ])
 
-    # Data rows
-    for entry in st.session_state.log:
-        row_cols = st.columns(len(cols))
-        for i, c in enumerate(cols):
-            row_cols[i].write(entry[c])
+    st.dataframe(styled_df, use_container_width=True)
 
     # CSV download
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button("Download log as CSV", csv, "mango_log.csv", "text/csv")
-
 else:
     if use_camera:
         st.info("Enable 'Use camera' then snap a photo above, or uncheck to close it.")
