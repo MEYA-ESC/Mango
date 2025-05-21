@@ -53,6 +53,11 @@ st.markdown("""
   padding: 8px !important;
   background-color: #FFFFFF !important;
 }
+</style>
+
+<div class="header">
+  <h1>🥭 Mango Ripeness Detector</h1>
+</div>
 
 """, unsafe_allow_html=True)
 
