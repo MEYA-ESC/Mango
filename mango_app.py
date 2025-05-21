@@ -43,7 +43,7 @@ st.markdown("""
   padding: 16px;
 }
 .stSidebar .css-1v3fvcr { /* section headers */
-  color: #4E342E;
+  color: #ad5a47;
   font-weight: 600;
 }
 /* Cards around images and tables */
