@@ -53,12 +53,7 @@ st.markdown("""
   padding: 8px !important;
   background-color: #FFFFFF !important;
 }
-</style>
 
-<div class="header">
-  <img src=<https://img.freepik.com/premium-vector/mango-logo-vector_535345-3179.jpg/>
-  <h1>🥭 Mango Ripeness Detector</h1>
-</div>
 """, unsafe_allow_html=True)
 
 
