@@ -86,7 +86,7 @@ if image_source:
         st.subheader("📑 Results Log (editable)")
         df = pd.DataFrame(st.session_state.log)
 
--       edited_df = st.experimental_data_editor(
+-       edited_df = st.experimental_data_editor()
 +       edited_df = st.data_editor(
             df,
             num_rows="dynamic",           # allow add/delete
