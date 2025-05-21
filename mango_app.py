@@ -148,15 +148,17 @@ if st.session_state.log:
         header_cols[i].markdown(f"**{c}**")
     header_cols[-1].markdown("")
 
-    # Data rows with delete button
+# Data rows with delete button
     for idx, entry in enumerate(st.session_state.log):
         row_cols = st.columns(len(cols) + 1)
     for i, c in enumerate(cols):
         row_cols[i].write(entry[c])
- if row_cols[-1].button("Delete", key=f"del_{idx}"):
-        st.session_state.log.pop(idx)
+if row_cols[-1].button("Delete", key=f"del_{idx}"):
+    st.session_state.log.pop(idx)
+    if version.parse(st.__version__) >= version.parse("1.25.0"):
         st.rerun()
-
+    else:
+        st.experimental_rerun()
 
     # CSV download
     csv = df.to_csv(index=False).encode("utf-8")
