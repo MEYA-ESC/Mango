@@ -70,4 +70,14 @@ if uploaded_file:
         st.image(cropped_img, caption="Cropped Mango", use_container_width=True)
 
     with col2:
-        st.subheader("🍃
+        st.subheader("🍃 Results")
+        st.markdown(f"**Average RGB:** {tuple(avg_color)}")
+        st.markdown(f"**Hue:** {hue:.1f}°")
+        st.markdown(f"### Predicted: {ripeness}")
+
+        st.markdown("**Color Swatch**")
+        swatch = np.ones((100, 100, 3), dtype=np.uint8) * np.array(avg_color, dtype=np.uint8)
+        st.image(swatch, use_container_width=True)
+
+else:
+    st.info("Please upload a mango image from the sidebar to get started.")
