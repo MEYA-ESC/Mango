@@ -75,7 +75,7 @@ if use_camera:
 else:
     image_source = st.sidebar.file_uploader("Upload Mango Image", type=["jpg","jpeg","png"])
 
-zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 50, 80)
+zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 80, 80)
 
 
 # --- Ripeness classification & analysis funcs ---
