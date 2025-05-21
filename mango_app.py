@@ -123,6 +123,12 @@ if image_source:
         "Ripeness": ripeness
     })
 
+else:
+    if use_camera:
+        st.info("✅ Flip on Use camera then snap a photo above. Uncheck to close camera.")
+    else:
+        st.info("Please upload a mango image from the sidebar.")
+
 # --- Results Log Table ---
 if st.session_state.log:
     st.markdown("---")
