@@ -133,7 +133,7 @@ if image_source:
     })
 
 
-# --- Results Log with Delete Buttons ---
+# --- Results Log ---
 if st.session_state.log:
     st.markdown("---")
     st.subheader("📑 Results Log")
@@ -141,17 +141,16 @@ if st.session_state.log:
     df = pd.DataFrame(st.session_state.log)
     cols = df.columns.tolist()
 
-# Header row
-header_cols = st.columns(len(cols) - 1)
-for i, c in enumerate(cols):
-    header_cols[i].markdown(f"**{c}**")
-header_cols[-1].markdown("")
-
-# Data rows without delete button
-for entry in st.session_state.log:
-    row_cols = st.columns(len(cols))
+    # Header row
+    header_cols = st.columns(len(cols))
     for i, c in enumerate(cols):
-        row_cols[i].write(entry[c])
+        header_cols[i].markdown(f"**{c}**")
+
+    # Data rows
+    for entry in st.session_state.log:
+        row_cols = st.columns(len(cols))
+        for i, c in enumerate(cols):
+            row_cols[i].write(entry[c])
 
     # CSV download
     csv = df.to_csv(index=False).encode("utf-8")
