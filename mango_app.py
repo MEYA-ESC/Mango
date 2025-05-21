@@ -128,7 +128,7 @@ if image_source:
         "Avg_R": avg_color[0],
         "Avg_G": avg_color[1],
         "Avg_B": avg_color[2],
-        "Hue": round(hue,2),
+        "Hue": f"{hue:.2f}".rstrip('0').rstrip('.'),
         "Ripeness": ripeness
     })
 
