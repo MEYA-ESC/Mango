@@ -159,8 +159,7 @@ if st.session_state.log:
             ]
         }
     ])
-
-  st.dataframe(styled_df, use_container_width=True)
+st.dataframe(styled_df, use_container_width=True)
 
     # CSV download
     csv = df.to_csv(index=False).encode("utf-8")
