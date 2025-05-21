@@ -42,16 +42,20 @@ def analyze_image(img, zoom):
 
     # Compute avg RGB
     arr = np.array(cropped)
-    avg = arr.mean(axis=(0, 1))
-    r, g, b = avg
+    avg = arr.mean(axis=(0, 1))  # yields floats
 
-    r_norm, g_norm, b_norm = r/255, g/255, b/255
-    h, s, v = colorsys.rgb_to_hsv(r_norm, g_norm, b_norm)
-    hue_deg = h * 360
+    # Convert to native Python ints
+    avg_py = [int(round(x)) for x in avg]
+
+    # RGB → HSV hue
+    r_norm, g_norm, b_norm = [c / 255.0 for c in avg_py]
+    h_norm, s, v = colorsys.rgb_to_hsv(r_norm, g_norm, b_norm)
+    hue_deg = h_norm * 360
 
     ripeness = classify_ripeness_by_hue(hue_deg)
-    return cropped, avg.astype(int), hue_deg, ripeness
+    return cropped, avg_py, hue_deg, ripeness
 
+# App title
 st.title("🥭 Mango Ripeness Detector")
 
 if uploaded_file:
@@ -66,14 +70,4 @@ if uploaded_file:
         st.image(cropped_img, caption="Cropped Mango", use_container_width=True)
 
     with col2:
-        st.subheader("🍃 Results")
-        st.markdown(f"**Average RGB:** {tuple(avg_color)}")
-        st.markdown(f"**Hue:** {hue:.1f}°")
-        st.markdown(f"### Predicted: {ripeness}")
-
-        st.markdown("**Color Swatch**")
-        swatch = np.ones((100, 100, 3), dtype=np.uint8) * avg_color
-        st.image(swatch, use_container_width=True)
-
-else:
-    st.info("Please upload a mango image from the sidebar to get started.")
+        st.subheader("🍃
