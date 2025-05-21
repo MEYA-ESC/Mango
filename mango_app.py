@@ -26,31 +26,37 @@ else:
 zoom_pct = st.sidebar.slider("Crop Zoom (%)", 10, 50, 40)
 
 # ... classification and analyze_image() remain unchanged ...
-
 st.title("🥭 Mango Ripeness Detector")
 
-if image_source:
-    # Process exactly as before
-    img = Image.open(image_source).convert("RGB")
-    cropped, avg_color, hue, ripeness = analyze_image(img, zoom_pct)
+- if image_source:
+-     # load via PIL
+-     img = Image.open(image_source).convert("RGB")
+-     cropped, avg_color, hue, ripeness = analyze_image(img, zoom_pct)
++ if image_source:
++     # 1) Open the selected file (upload or camera) into `img`
++     img = Image.open(image_source).convert("RGB")
++
++     # 2) Now call analyze_image on that img
++     cropped, avg_color, hue, ripeness = analyze_image(img, zoom_pct)
 
-    c1, c2 = st.columns([2,1])
-    with c1:
-        st.image(cropped, caption="Cropped Mango", use_container_width=True)
-    with c2:
-        st.subheader("🍃 Results")
-        st.markdown(f"**Avg RGB:** {tuple(avg_color)}")
-        st.markdown(f"**Hue:** {hue:.1f}°")
-        st.markdown(f"### Predicted: {ripeness}")
-        sw = np.ones((100,100,3),dtype=np.uint8)*np.array(avg_color,dtype=np.uint8)
-        st.image(sw, caption="Color Swatch", use_container_width=True)
+     # display
+     col1, col2 = st.columns([2,1])
+     with col1:
+         st.image(cropped, caption="Cropped Mango", use_container_width=True)
+     with col2:
+         st.subheader("🍃 Results")
+         st.markdown(f"**Average RGB:** {tuple(avg_color)}")
+         st.markdown(f"**Hue:** {hue:.1f}°")
+         st.markdown(f"### Predicted: {ripeness}")
+         sw = np.ones((100,100,3), dtype=np.uint8)*np.array(avg_color, dtype=np.uint8)
+         st.image(sw, caption="Color Swatch", use_container_width=True)
 
-    # log it
-    st.session_state.log.append({
-        "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "Avg_R": avg_color[0], "Avg_G": avg_color[1], "Avg_B": avg_color[2],
-        "Hue": round(hue,1), "Ripeness": ripeness
-    })
+     # log it
+     st.session_state.log.append({
+         "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+         "Avg_R": avg_color[0], "Avg_G": avg_color[1], "Avg_B": avg_color[2],
+         "Hue": round(hue,1), "Ripeness": ripeness
+     })
 else:
     if use_camera:
         st.info("✅ Flip on Use camera then snap a photo above. Uncheck to close camera.")
