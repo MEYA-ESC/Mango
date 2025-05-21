@@ -13,7 +13,7 @@ st.set_page_config(
 
 # Sidebar controls
 st.sidebar.title("📋 Settings")
-uploaded_file = st.sidebar.file_uploader("Upload mango image", type=["jpg", "jpeg", "png"])
+uploaded_file = st.sidebar.file_uploader("Upload Mango Image", type=["jpg", "jpeg", "png"])
 zoom_pct = st.sidebar.slider("Crop zoom (%)", min_value=10, max_value=50, value=40)
 
 # Ripeness classification thresholds
@@ -45,10 +45,9 @@ def analyze_image(img, zoom):
     avg = arr.mean(axis=(0, 1))
     r, g, b = avg
 
-    # RGB → HSL (hue)
-    rn, gn, bn = r/255.0, g/255.0, b/255.0
-    h_norm, _, _ = colorsys.rgb_to_hls(rn, gn, bn)
-    hue_deg = h_norm * 360
+    r_norm, g_norm, b_norm = r/255, g/255, b/255
+    h, s, v = colorsys.rgb_to_hsv(r_norm, g_norm, b_norm)
+    hue_deg = h * 360
 
     ripeness = classify_ripeness_by_hue(hue_deg)
     return cropped, avg.astype(int), hue_deg, ripeness
@@ -68,7 +67,8 @@ if uploaded_file:
 
     with col2:
         st.subheader("🍃 Results")
-        st.markdown(f"**Average RGB:** {tuple(avg_color)}")
+       avg_rgb = tuple(int(c) for c in avg_color)
+        st.markdown(f"**Average RGB:** {avg_rgb}")
         st.markdown(f"**Hue:** {hue:.1f}°")
         st.markdown(f"### Predicted: {ripeness}")
 
